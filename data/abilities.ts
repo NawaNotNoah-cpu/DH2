@@ -5651,4 +5651,74 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 3,
 		num: -4,
 	},
+	// Couch Lore
+	graveguardian: {
+		name: "Grave Guardian",
+		shortDesc: "Fighting/Ghost moves ignore immunities. Transforms to Grave Guardian instead of fainting",
+		rating: 5,
+		num: -1000,
+
+		onModifyMove(move) {
+			if (!move.ignoreImmunity) move.ignoreImmunity = {};
+			if (move.ignoreImmunity !== true) {
+				move.ignoreImmunity['Fighting'] = true;
+				move.ignoreImmunity['Ghost'] = true;
+			}
+		},
+
+		onDamage(damage, target, source, effect) {
+			if (target.volatiles['graveguardianused']) return;
+			if (target.volatiles['graveguardianprotect']) return 0;
+			if (damage >= target.hp) {
+				const damageToApply = target.hp - 0.001; // survive at 1 HP
+				target.addVolatile('graveguardianprotect');
+				this.add('-ability', target, 'Grave Guardian');
+				this.add('-message', `${target.name}'s spirit refuses to fade!`);
+				return damageToApply;
+			}
+			return; // normal damage
+		},
+
+		condition: {
+			duration: 1,
+			onDamagePriority: 100,
+			onDamage(damage, target, source, effect) {
+				if (target.volatiles['graveguardianprotect']) {
+					return 0; // block all damage while protected
+				}
+			},
+		},
+
+		onResidualOrder: 29,
+		onResidual(target) {
+			if (!target.volatiles['graveguardianprotect'] || target.volatiles['graveguardianused']) return;
+
+			// Remove temporary protection
+			target.removeVolatile('graveguardianprotect');
+
+			if (!target.transformed && target.species.id !== 'zellagraveguardian') {
+				// Transform
+				target.formeChange('zellagraveguardian', this.effect, true);
+
+				// Swap Bone Bash -> Zella-Zella Bone Barrage if present
+				const bashIndex = target.moveSlots.findIndex(slot => slot.id === 'bonebash');
+				if (bashIndex >= 0) {
+					const slot = target.moveSlots[bashIndex];
+					slot.id = 'zellazellabonebarrage' as ID;
+					slot.move = this.dex.moves.get('zellazellabonebarrage').name;
+				}
+
+				// Heal 75% of current max HP of the transformed Pokémon
+				const healAmount = Math.floor(target.maxhp / 8); // (your code used /8 earlier)
+				target.heal(healAmount);
+				this.add('-heal', target, healAmount, '[from] ability: Grave Guardian');
+
+				// Mark ability as used
+				target.addVolatile('graveguardianused');
+
+				// Transform message
+				this.add('-message', `${target.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
+			}
+		},
+	},
 };
