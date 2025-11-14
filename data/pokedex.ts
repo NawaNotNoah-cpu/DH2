@@ -20277,7 +20277,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		gen: 5,
 	},
 // Couch Lore:
-		zella: {
+	zella: {
 		num: -1001,
 		name: "Zella",
 		types: ["Ghost"],
@@ -20293,7 +20293,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		spriteid: "cubone",
 		gen: 9,
 	},
-	'zella-graveguardian': {
+	zellagraveguardian: {
 		num: -1001,
 		name: "Zella-Grave-Guardian",
 		baseSpecies: "Zella",
