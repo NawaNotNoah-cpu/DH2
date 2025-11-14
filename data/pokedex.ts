@@ -20293,7 +20293,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		spriteid: "cubone",
 		gen: 9,
 	},
-	zella-graveguardian: {
+	zellagraveguardian: {
 		num: -1001,
 		name: "Zella-Grave-Guardian",
 		baseSpecies: "Zella",
