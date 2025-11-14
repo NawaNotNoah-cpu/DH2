@@ -6148,4 +6148,16 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 		isNonstandard: "Custom",
 		tier: "Illegal",
 	},
+		//Couch Lore
+	zella: {
+	tier: "OU",
+	doublesTier: "DOU",
+	natDexTier: "OU",
+	},
+	zellagraveguardian: {
+		tier: "OU",
+		doublesTier: "DOU",
+		natDexTier: "OU",
+	},
+
 };
