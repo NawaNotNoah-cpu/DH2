@@ -20276,4 +20276,37 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		gen: 5,
 	},
+// Couch Lore:
+		zella: {
+		num: -1001,
+		name: "Zella",
+		types: ["Ghost"],
+		gender: "N",
+		baseStats: { hp: 140, atk: 120, def: 65, spa: 60, spd: 65, spe: 80 }, // BST = 530
+		abilities: { 0: "Grave Guardian" },
+		heightm: 1.4,
+		weightkg: 34.0,
+		color: "Purple",
+		eggGroups: ["Undiscovered"],
+		formeOrder: ["Zella", "Zella-Grave-Guardian"],
+		otherFormes: ["zella-graveguardian"],
+		spriteid: "cubone",
+		gen: 9,
+	},
+	'zella-graveguardian': {
+		num: -1001,
+		name: "Zella-Grave-Guardian",
+		baseSpecies: "Zella",
+		forme: "Grave-Guardian",
+		types: ["Ghost"],
+		gender: "N",
+		baseStats: { hp: 100, atk: 145, def: 90, spa: 70, spd: 90, spe: 105 }, // BST = 600
+		abilities: { 0: "Grave Guardian" },
+		heightm: 1.5,
+		weightkg: 45.0,
+		color: "Black",
+		eggGroups: ["Undiscovered"],
+		spriteid: "marowak-alola",
+		gen: 9,
+	},
 };

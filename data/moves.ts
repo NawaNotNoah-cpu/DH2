@@ -22068,4 +22068,50 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		type: "Electric",
 		contestType: "Cool",
 	},
+// Couch Lore
+		bonebash: {
+		num: -10001,
+		accuracy: 100,
+		basePower: 70,
+		category: "Physical",
+		name: "Bone Bash",
+		shortDesc: "50% chance to lower user's Def and raise Atk & Spe by 1. Becomes Bone Barrage in Grave Guardian form.",
+		pp: 15,
+		priority: 0,
+		flags: { contact: 1, protect: 1, mirror: 1 },
+		onAfterHit(target, source, move) {
+			if (this.randomChance(1, 2)) {
+				this.boost({ atk: 1, spe: 1 }, source, source, move);
+				this.boost({ def: -1 }, source, source, move);
+				this.add('-message', `${source.name} is empowered by spectral fury!`);
+			}
+		},
+		secondary: null,
+		target: "normal",
+		type: "Ghost",
+	},
+
+	zellazellabonebarrage: {
+		num: -10002,
+		accuracy: 90,
+		basePower: 100,
+		category: "Physical",
+		name: "Zella-Zella Bone Barrage",
+		shortDesc: "Hits both foes. Sets 1 layer of Spikes per adjacent opponent",
+		pp: 10,
+		priority: 0,
+		flags: { contact: 1, protect: 1, mirror: 1 },
+		target: "allAdjacentFoes",
+		type: "Ghost",
+		onAfterHit(target, source, move) {
+			if (source.hp) {
+				const side = source.side.foe;
+				if (side) {
+					// add one layer of spikes per call (the battle engine will handle stacking)
+					side.addSideCondition('spikes');
+				}
+			}
+		},
+		secondary: null,
+	},
 };
