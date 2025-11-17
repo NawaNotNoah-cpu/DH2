@@ -5666,7 +5666,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 
 		onDamage(damage, target, source, effect) {
 			if (target.volatiles['graveguardianused']) return;
-			if (target.volatiles['graveguardianprotect']) return 0;
+			if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) return 0;
 			if (damage >= target.hp) {
 				const damageToApply = target.hp - 0.001; // survive at 1 HP
 				target.addVolatile('graveguardianprotect');
@@ -5681,7 +5681,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			duration: 1,
 			onDamagePriority: 100,
 			onDamage(damage, target, source, effect) {
-				if (target.volatiles['graveguardianprotect']) {
+				if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) {
 					return 0; // block all damage while protected
 				}
 			},
