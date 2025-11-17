@@ -1,4 +1,4 @@
-/*
+w/*
 
 Ratings and how they work:
 
@@ -701,12 +701,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			for (i in ally.boosts) {
 				pokemon.boosts[i] = ally.boosts[i];
 			}
-			const volatilesToCopy = ['dragoncheer', 'focusenergy', 'gmaxchistrike', 'laserfocus'];
+			const volatilesToCopy = ['focusenergy', 'gmaxchistrike', 'laserfocus'];
 			for (const volatile of volatilesToCopy) {
 				if (ally.volatiles[volatile]) {
 					pokemon.addVolatile(volatile);
 					if (volatile === 'gmaxchistrike') pokemon.volatiles[volatile].layers = ally.volatiles[volatile].layers;
-					if (volatile === 'dragoncheer') pokemon.volatiles[volatile].hasDragonType = ally.volatiles[volatile].hasDragonType;
 				} else {
 					pokemon.removeVolatile(volatile);
 				}
@@ -1501,7 +1500,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onStart(pokemon) {
 			for (const target of pokemon.foes()) {
 				if (target.item) {
-					this.add('-item', target, target.getItem().name, '[from] ability: Frisk', '[of] ' + pokemon);
+					this.add('-item', target, target.getItem().name, '[from] ability: Frisk', '[of] ' + pokemon, '[identify]');
 				}
 			}
 		},
@@ -4869,7 +4868,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onEffectiveness(typeMod, target, type, move) {
 			if (!target || target.species.name !== 'Terapagos-Terastal') return;
 			if (this.effectState.resisted) return -1; // all hits of multi-hit move should be not very effective
-			if (move.category === 'Status' || move.id === 'struggle') return;
+			if (move.category === 'Status') return;
 			if (!target.runImmunity(move.type)) return; // immunity has priority
 			if (target.hp < target.maxhp) return;
 
@@ -5651,7 +5650,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 3,
 		num: -4,
 	},
-	// Couch Lore
 	graveguardian: {
 		name: "Grave Guardian",
 		shortDesc: "Fighting/Ghost moves ignore immunities. Transforms to Grave Guardian instead of fainting",
@@ -5695,6 +5693,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 
 			// Remove temporary protection
 			target.removeVolatile('graveguardianprotect');
+			target.addVolatile('graveguardianused');
 
 			if (!target.transformed && target.species.id !== 'zellagraveguardian') {
 				// Transform
@@ -5708,10 +5707,18 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 					slot.move = this.dex.moves.get('zellazellabonebarrage').name;
 				}
 
-				// Heal 75% of current max HP of the transformed Pokémon
-				const healAmount = Math.floor(target.maxhp / 8); // (your code used /8 earlier)
-				target.heal(healAmount);
-				this.add('-heal', target, healAmount, '[from] ability: Grave Guardian');
+				// Recompute baseMaxhp from the transformed species' base HP, IVs, EVs and level
+				target.baseMaxhp = Math.floor(Math.floor(
+					2 * target.species.baseStats['hp'] + target.set.ivs['hp'] + Math.floor(target.set.evs['hp'] / 4) + 100
+				) * target.level / 100 + 10);
+				// account for dynamax if present
+				const newMaxHP = target.volatiles['dynamax'] ? (2 * target.baseMaxhp) : target.baseMaxhp;
+				// preserve damage taken: newHP = newMaxHP - (oldMaxHP - oldHP)
+				target.hp = newMaxHP - (target.maxhp - target.hp);
+				target.maxhp = newMaxHP;
+
+				// show heal/ability activation
+				this.add('-heal', target, target.getHealth, '[from] ability: Grave Guardian');
 
 				// Mark ability as used
 				target.addVolatile('graveguardianused');
@@ -5720,5 +5727,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				this.add('-message', `${target.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
 			}
 		},
+
 	},
 };
