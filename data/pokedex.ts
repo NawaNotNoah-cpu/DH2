@@ -20282,11 +20282,11 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		name: "Zella",
 		types: ["Ghost"], 
 		gender: "N",
-		baseStats: { hp: 140, atk: 120, def: 65, spa: 60, spd: 65, spe: 80 }, // BST = 530
+		baseStats: { hp: 140, atk: 120, def: 70, spa: 50, spd: 70, spe: 80 }, // BST = 530
 		abilities: { 0: "Grave Guardian" },
 		heightm: 1.4,
 		weightkg: 34.0,
-		color: "Purple",
+		color: "Green",
 		eggGroups: ["Undiscovered"],
 		formeOrder: ["Zella", "Zella-GraveGuardian"],
 		otherFormes: ["Zella-GraveGuardian"],
@@ -20299,11 +20299,11 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		forme: "Grave-Guardian",
 		types: ["Ghost"],
 		gender: "N",
-		baseStats: { hp: 80, atk: 150, def: 90, spa: 75, spd: 90, spe: 115 }, // BST = 600
+		baseStats: { hp: 70, atk: 150, def: 80, spa: 65, spd: 80, spe: 115 }, // BST = 560
 		abilities: { 0: "Grave Guardian" },
 		heightm: 1.5,
 		weightkg: 45.0,
-		color: "Black",
+		color: "Green",
 		eggGroups: ["Undiscovered"],
 		gen: 9,
 	},

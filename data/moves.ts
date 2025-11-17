@@ -22075,15 +22075,15 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		basePower: 70,
 		category: "Physical",
 		name: "Bone Bash",
-		shortDesc: "50% chance to lower user's Def and raise Atk & Spe by 1. Becomes Bone Barrage in Grave Guardian form.",
+		shortDesc: "50% chance to lower Defense and raise Speed by 1.",
 		pp: 15,
 		priority: 0,
 		flags: { contact: 1, protect: 1, mirror: 1 },
 		onAfterHit(target, source, move) {
 			if (this.randomChance(1, 2)) {
-				this.boost({ atk: 1, spe: 1 }, source, source, move);
 				this.boost({ def: -1 }, source, source, move);
-				this.add('-message', `${source.name} is empowered by spectral fury!`);
+				this.boost({ spe: 1 }, source, source, move);
+				this.add('-message', `${source.name} cracked its skull open!`);
 			}
 		},
 		secondary: null,
