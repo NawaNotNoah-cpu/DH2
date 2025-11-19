@@ -5669,7 +5669,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) return 0;
 			if (damage >= target.hp) {
 				const damageToApply = target.hp - 0.001; // survive at 1 HP
-				target.addVolatile('graveguardianprotect');
+				
+				if (!target.volatiles['graveguardianused'])
+				{
+					target.addVolatile('graveguardianprotect');
+				}
 				this.add('-ability', target, 'Grave Guardian');
 				this.add('-message', `${target.name}'s spirit refuses to fade!`);
 				return damageToApply;
@@ -5708,23 +5712,22 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				}
 
 				// Recompute baseMaxhp from the transformed species' base HP, IVs, EVs and level
-				target.baseMaxhp = Math.floor(Math.floor(
-					2 * target.species.baseStats['hp'] + target.set.ivs['hp'] + Math.floor(target.set.evs['hp'] / 4) + 100
-				) * target.level / 100 + 10);
-				// account for dynamax if present
-				const newMaxHP = target.volatiles['dynamax'] ? (2 * target.baseMaxhp) : target.baseMaxhp;
-				// preserve damage taken: newHP = newMaxHP - (oldMaxHP - oldHP)
-				target.hp = newMaxHP - (target.maxhp - target.hp);
-				target.maxhp = newMaxHP;
-
-				// show heal/ability activation
-				this.add('-heal', target, target.getHealth, '[from] ability: Grave Guardian');
+				pokemon.baseMaxhp = Math.floor(Math.floor(
+					2 * pokemon.species.baseStats['hp'] + pokemon.set.ivs['hp'] + Math.floor(pokemon.set.evs['hp'] / 4) + 100
+				) * pokemon.level / 100 + 10);
+				const newMaxHP = pokemon.volatiles['dynamax'] ? (2 * pokemon.baseMaxhp) : pokemon.baseMaxhp;
+				pokemon.hp = newMaxHP - (pokemon.maxhp - pokemon.hp);
+				pokemon.maxhp = newMaxHP;
+				this.add('-heal', pokemon, pokemon.getHealth, '[from] ability: Grave Guardian');
 
 				// Mark ability as used
 				target.addVolatile('graveguardianused');
 
 				// Transform message
 				this.add('-message', `${target.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
+				this.add('-message', `${target.name} cannot escape!`);
+				target.tryTrap(true);
+
 			}
 		},
 
