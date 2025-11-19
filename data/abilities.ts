@@ -1,4 +1,4 @@
-w/*
+/*
 
 Ratings and how they work:
 
