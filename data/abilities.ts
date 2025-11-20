@@ -5665,13 +5665,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		},
 
 		onDamage(damage, target, source, effect) {
+			// Protection trigger (keep naming as 'target' here because onDamage passes 'target')
 			if (target.volatiles['graveguardianused']) return;
 			if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) return 0;
 			if (damage >= target.hp) {
 				const damageToApply = target.hp - 0.001; // survive at 1 HP
-				
-				if (!target.volatiles['graveguardianused'])
-				{
+
+				if (!target.volatiles['graveguardianused']) {
 					target.addVolatile('graveguardianprotect');
 				}
 				this.add('-ability', target, 'Grave Guardian');
@@ -5686,50 +5686,64 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			onDamagePriority: 100,
 			onDamage(damage, target, source, effect) {
 				if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) {
-					return 0; // block all damage while protected
+					return 0; // block damage while protected
 				}
 			},
 		},
 
-		onResidualOrder: 29,
-		onResidual(target) {
-			if (!target.volatiles['graveguardianprotect'] || target.volatiles['graveguardianused']) return;
-
-			// Remove temporary protection
-			target.removeVolatile('graveguardianprotect');
-			target.addVolatile('graveguardianused');
-
-			if (!target.transformed && target.species.id !== 'zellagraveguardian') {
-				// Transform
-				target.formeChange('zellagraveguardian', this.effect, true);
-
-				// Swap Bone Bash -> Zella-Zella Bone Barrage if present
-				const bashIndex = target.moveSlots.findIndex(slot => slot.id === 'bonebash');
-				if (bashIndex >= 0) {
-					const slot = target.moveSlots[bashIndex];
-					slot.id = 'zellazellabonebarrage' as ID;
-					slot.move = this.dex.moves.get('zellazellabonebarrage').name;
-				}
-
-				// Recompute baseMaxhp from the transformed species' base HP, IVs, EVs and level
-				pokemon.baseMaxhp = Math.floor(Math.floor(
-					2 * pokemon.species.baseStats['hp'] + pokemon.set.ivs['hp'] + Math.floor(pokemon.set.evs['hp'] / 4) + 100
-				) * pokemon.level / 100 + 10);
-				const newMaxHP = pokemon.volatiles['dynamax'] ? (2 * pokemon.baseMaxhp) : pokemon.baseMaxhp;
-				pokemon.hp = newMaxHP - (pokemon.maxhp - pokemon.hp);
-				pokemon.maxhp = newMaxHP;
-				this.add('-heal', pokemon, pokemon.getHealth, '[from] ability: Grave Guardian');
-
-				// Mark ability as used
-				target.addVolatile('graveguardianused');
-
-				// Transform message
-				this.add('-message', `${target.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
-				this.add('-message', `${target.name} cannot escape!`);
-				target.tryTrap(true);
-
+		// If a Pokemon switches in *already* in the Grave Guardian form, mark the ability as used.
+		// This prevents double-protection/transform re-triggering for mons that were transformed off-slot.
+		onSwitchIn(pokemon) {
+			// check baseSpecies so reworks with forme naming
+			if (pokemon.baseSpecies.baseSpecies === 'Zella' && pokemon.species.id === 'zellagraveguardian') {
+				// mark it used so it doesn't try to protect & transform again
+				pokemon.addVolatile('graveguardianused');
 			}
 		},
 
+		onResidualOrder: 29,
+		onResidual(pokemon) {
+			// Use the same param name as Power Construct for parity
+			if (!pokemon.volatiles['graveguardianprotect'] || pokemon.volatiles['graveguardianused']) return;
+
+			// Remove temporary protection and mark used
+			pokemon.removeVolatile('graveguardianprotect');
+			pokemon.addVolatile('graveguardianused');
+
+			// Only transform if not transformed and not already the grave guardian form
+			if (!pokemon.transformed && pokemon.species.id !== 'zellagraveguardian') {
+				// Transform
+				pokemon.formeChange('zellagraveguardian', this.effect, true);
+
+				// Swap Bone Bash -> Zella-Zella Bone Barrage if present
+				const bashIndex = pokemon.moveSlots.findIndex(slot => slot.id === 'bonebash');
+				if (bashIndex >= 0) {
+					const slot = pokemon.moveSlots[bashIndex];
+					slot.id = 'zellazellabonebarrage' as ID;
+					const moveObj = this.dex.moves.get('zellazellabonebarrage');
+					if (moveObj) slot.move = moveObj.name;
+				}
+
+				// Recompute baseMaxhp using same formula as Power Construct (reads IVs/EVs but does not set them)
+				pokemon.baseMaxhp = Math.floor(Math.floor(
+					2 * pokemon.species.baseStats['hp'] + (pokemon.set.ivs?.hp ?? 31) + Math.floor((pokemon.set.evs?.hp ?? 0) / 4) + 100
+				) * pokemon.level / 100 + 10);
+				const newMaxHP = pokemon.volatiles['dynamax'] ? (2 * pokemon.baseMaxhp) : pokemon.baseMaxhp;
+				// preserve HP difference proportionally
+				pokemon.hp = newMaxHP - (pokemon.maxhp - pokemon.hp);
+				pokemon.maxhp = newMaxHP;
+
+				// Heal with the correct, transformed HP string. Use silent heal (like Power Construct).
+				this.add('-heal', pokemon, pokemon.getHealth, '[silent]');
+
+				// Trap after transform (keeps your behavior)
+				this.add('-message', `${pokemon.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
+				this.add('-message', `${pokemon.name} cannot escape!`);
+				pokemon.tryTrap(true);
+			}
+		},
+
+		flags: {failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, cantsuppress: 1},
 	},
+
 };
