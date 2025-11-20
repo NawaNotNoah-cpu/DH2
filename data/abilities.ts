@@ -5724,22 +5724,20 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 					if (moveObj) slot.move = moveObj.name;
 				}
 
-				// Recompute baseMaxhp using same formula as Power Construct (reads IVs/EVs but does not set them)
+				// Recompute baseMaxhp exactly like Power Construct
 				pokemon.baseMaxhp = Math.floor(Math.floor(
-					2 * pokemon.species.baseStats['hp'] + (pokemon.set.ivs?.hp ?? 31) + Math.floor((pokemon.set.evs?.hp ?? 0) / 4) + 100
+					2 * pokemon.species.baseStats['hp'] + pokemon.set.ivs['hp'] + Math.floor(pokemon.set.evs['hp'] / 4) + 100
 				) * pokemon.level / 100 + 10);
+
 				const newMaxHP = pokemon.volatiles['dynamax'] ? (2 * pokemon.baseMaxhp) : pokemon.baseMaxhp;
-				// preserve HP difference proportionally
 				pokemon.hp = newMaxHP - (pokemon.maxhp - pokemon.hp);
 				pokemon.maxhp = newMaxHP;
 
-				// Heal with the correct, transformed HP string. Use silent heal (like Power Construct).
 				this.add('-heal', pokemon, pokemon.getHealth, '[silent]');
+
 
 				// Trap after transform (keeps your behavior)
 				this.add('-message', `${pokemon.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
-				this.add('-message', `${pokemon.name} cannot escape!`);
-				pokemon.tryTrap(true);
 			}
 		},
 
