@@ -5724,19 +5724,18 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 					if (moveObj) slot.move = moveObj.name;
 				}
 
-				// Recompute baseMaxhp exactly like Power Construct
+				// Recompute baseMaxhp
 				pokemon.baseMaxhp = Math.floor(Math.floor(
 					2 * pokemon.species.baseStats['hp'] + pokemon.set.ivs['hp'] + Math.floor(pokemon.set.evs['hp'] / 4) + 100
 				) * pokemon.level / 100 + 10);
 
-				const newMaxHP = pokemon.volatiles['dynamax'] ? (2 * pokemon.baseMaxhp) : pokemon.baseMaxhp;
-				pokemon.hp = newMaxHP - (pokemon.maxhp - pokemon.hp);
+				const newMaxHP = pokemon.baseMaxhp;
 				pokemon.maxhp = newMaxHP;
+				pokemon.hp = Math.floor(newMaxHP / 2);
 
 				this.add('-heal', pokemon, pokemon.getHealth, '[silent]');
 
 
-				// Trap after transform (keeps your behavior)
 				this.add('-message', `${pokemon.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
 			}
 		},
