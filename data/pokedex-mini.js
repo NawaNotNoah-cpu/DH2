@@ -1606,6 +1606,6 @@ exports.BattlePokemonSprites = {
 	pokestarblackbeltprop:{num:-5014},
 	pokestarufopropu2:{num:-5001},
     zella:{num:-1001,front:{w:32,h:52},back:{w:34,h:51}},
-    zellagraveguardian:{num:-1001,front:{w:64,h:99},back:{w:63,h:98}}
-	bryce:{num:-1002,front:{w:84,h:101},back:{w:80,h:97}},
+    zellagraveguardian:{num:-1001,front:{w:64,h:99},back:{w:63,h:98}},
+	bryce:{num:-1002,front:{w:84,h:101},back:{w:80,h:97}}
 };

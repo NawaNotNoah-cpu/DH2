@@ -22120,7 +22120,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		basePower: 90,
 		category: "Physical",
 		name: "Sticky Slam",
-		pp: 16,
+		shortDesc: "Lowers stats in Sandstorm. Traps foe in Rain. Sets Rocks in Dry.",
+		pp: 10,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
 		type: "Ground",
@@ -22135,17 +22136,20 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			if (!weather || ['sunnyday', 'desolateland', 'snow'].includes(weather)) {
 				for (const side of source.side.foeSidesWithConditions()) {
 					side.addSideCondition('stealthrock');
+					this.hint("Dry and crumbly concrete!");
 				}
 			}
 
 			// ----- Trap + damage in Rain -----
 			if (['raindance', 'primordialsea'].includes(weather)) {
 				target.addVolatile('partiallytrapped', source, move);
+				this.hint("Wet and mucky concrete!");
 			}
 
 			// ----- Stat drops in Sandstorm -----
 			if (weather === 'sandstorm') {
 				this.boost({atk: -1, spa: -1, spe: -1}, target);
+				this.hint("Dusty and powdery concrete!");
 			}
 		},
 	},

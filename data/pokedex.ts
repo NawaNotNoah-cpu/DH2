@@ -20315,7 +20315,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		abilities: {0: "Concrete Mixer"},
 		heightm: 1.7,
 		weightkg: 86.0,
-		color: "Brown",
+		color: "Pink",
 		eggGroups: ["Water1", "Mineral"],
 	},
 

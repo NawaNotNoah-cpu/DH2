@@ -5751,11 +5751,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (!move) return;
 
 			if (move.category === "Special") {
-				this.add('-ability', target, 'Concrete Mixer');
 				this.field.setWeather('raindance');
+				this.add('-message', `Wet cement flew up into the air!`);
 			} else if (move.category === "Physical") {
-				this.add('-ability', target, 'Concrete Mixer');
 				this.field.setWeather('sandstorm');
+				this.add('-message', `Concrete powder flew up into the air!`);
 			}
 		},
 
