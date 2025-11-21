@@ -5742,5 +5742,24 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 
 		flags: {failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, cantsuppress: 1},
 	},
+	concretemixer: {
+		name: "Concrete Mixer",
+		shortDesc: "Special hit: sets rain. Physical hit: sets sandstorm.",
 
+		// After taking damage
+		onDamagingHit(damage, target, source, move) {
+			if (!move) return;
+
+			if (move.category === "Special") {
+				this.add('-ability', target, 'Concrete Mixer');
+				this.field.setWeather('raindance');
+			} else if (move.category === "Physical") {
+				this.add('-ability', target, 'Concrete Mixer');
+				this.field.setWeather('sandstorm');
+			}
+		},
+
+		rating: 4,
+		num: -1002,
+	},
 };

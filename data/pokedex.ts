@@ -20307,4 +20307,16 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		gen: 9,
 	},
+	bryce: {
+		num: -1002,
+		name: "Bryce",
+		types: ["Ground", "Water"],
+		baseStats: {hp: 60, atk: 70, def: 120, spa: 65, spd: 105, spe: 110},
+		abilities: {0: "Concrete Mixer"},
+		heightm: 1.7,
+		weightkg: 86.0,
+		color: "Brown",
+		eggGroups: ["Water1", "Mineral"],
+	},
+
 };

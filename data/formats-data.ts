@@ -6159,10 +6159,10 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
-	peter: {
+	bryce: {
 		tier: "UU",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	
-	};
+};

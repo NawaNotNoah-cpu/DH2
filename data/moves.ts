@@ -22070,7 +22070,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 	},
 // Couch Lore
 		bonebash: {
-		num: -10001,
+		num: -1001,
 		accuracy: 100,
 		basePower: 70,
 		category: "Physical",
@@ -22092,7 +22092,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 	},
 
 	zellazellabonebarrage: {
-		num: -10002,
+		num: -1002,
 		accuracy: 90,
 		basePower: 100,
 		category: "Physical",
@@ -22114,4 +22114,40 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		},
 		secondary: null,
 	},
+	stickyslam: {
+		num: -1003,
+		accuracy: 100,
+		basePower: 90,
+		category: "Physical",
+		name: "Sticky Slam",
+		pp: 16,
+		priority: 0,
+		flags: {contact: 1, protect: 1, mirror: 1},
+		type: "Ground",
+		target: "normal",
+
+		onAfterHit(target, source, move) {
+			if (!source.hp) return;
+
+			const weather = source.battle.field.weather;
+
+			// ----- Stealth Rock in Clear/Sun/Snow -----
+			if (!weather || ['sunnyday', 'desolateland', 'snow'].includes(weather)) {
+				for (const side of source.side.foeSidesWithConditions()) {
+					side.addSideCondition('stealthrock');
+				}
+			}
+
+			// ----- Trap + damage in Rain -----
+			if (['raindance', 'primordialsea'].includes(weather)) {
+				target.addVolatile('partiallytrapped', source, move);
+			}
+
+			// ----- Stat drops in Sandstorm -----
+			if (weather === 'sandstorm') {
+				this.boost({atk: -1, spa: -1, spe: -1}, target);
+			}
+		},
+	},
+
 };
