@@ -598,7 +598,7 @@ export class TeamValidator {
 
 		const setHas: {[k: string]: true} = {};
 
-		if (!set.evs) set.evs = TeamValidator.fillStats(null, ruleTable.evLimit === null ? 252 : 0);
+		if (!set.evs) set.evs = TeamValidator.fillStats(null, ruleTable.evLimit === null ? 999999 : 0);
 		if (!set.ivs) set.ivs = TeamValidator.fillStats(null, 31);
 
 		if (ruleTable.has('obtainableformes')) {
@@ -1052,7 +1052,7 @@ export class TeamValidator {
 		const evLimit = ruleTable.evLimit;
 		const canBottleCap = dex.gen >= 7 && (set.level >= (dex.gen < 9 ? 100 : 50) || !ruleTable.has('obtainablemisc')) || dex.currentMod === 'moderngen1' || dex.currentMod === 'moderngen2';
 
-		if (!set.evs) set.evs = TeamValidator.fillStats(null, evLimit === null ? 252 : 0);
+		if (!set.evs) set.evs = TeamValidator.fillStats(null, evLimit === null ? 999999 : 0);
 		if (!set.ivs) set.ivs = TeamValidator.fillStats(null, 31);
 
 		const problems = [];
@@ -1191,7 +1191,7 @@ export class TeamValidator {
 			) {
 				// Marowak hack
 				set.ivs.atk = Math.floor(set.ivs.atk / 2) * 2;
-				while (set.evs.atk > 0 && 2 * 80 + set.ivs.atk + Math.floor(set.evs.atk / 4) + 5 > 255) {
+				while (set.evs.atk > 0 && 2 * 80 + set.ivs.atk + Math.floor(set.evs.atk / 4) + 5 > 999999) {
 					set.evs.atk -= 4;
 				}
 			}
@@ -1223,7 +1223,7 @@ export class TeamValidator {
 			}
 		} else { // EVs
 			for (const stat in set.evs) {
-				if (set.evs[stat as StatID] > 255) {
+				if (set.evs[stat as StatID] > 999999) {
 					problems.push(`${name} has more than 255 EVs in ${Dex.stats.names[stat as 'hp']}.`);
 				}
 			}
