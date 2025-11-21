@@ -1207,7 +1207,7 @@ export class TeamValidator {
 		}
 
 		for (const stat in set.evs) {
-			if (set.evs[stat as 'hp'] < 0) {
+			if (set.evs[stat as 'hp'] < -999999) {
 				problems.push(`${name} has less than 0 ${allowAVs ? 'Awakening Values' : 'EVs'} in ${Dex.stats.names[stat as 'hp']}.`);
 			}
 		}
