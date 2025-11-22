@@ -22123,7 +22123,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		shortDesc: "Lowers stats in Sandstorm. Traps foe in Rain. Sets Rocks in Dry.",
 		pp: 10,
 		priority: 0,
-		flags: {contact: 1, protect: 1, mirror: 1},
+		flags: {protect: 1, mirror: 1, metronome: 1},
 		type: "Ground",
 		target: "normal",
 
@@ -22148,7 +22148,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 
 			// ----- Stat drops in Sandstorm -----
 			if (weather === 'sandstorm') {
-				this.boost({atk: -1, spa: -1, spe: -1}, target);
+				this.boost({spe: -1, accuracy: -1,}, target);
 				this.hint("Dusty and powdery concrete!");
 			}
 		},
