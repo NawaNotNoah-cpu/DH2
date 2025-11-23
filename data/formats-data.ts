@@ -6150,9 +6150,9 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	},
 		//Couch Lore
 	zella: {
-	tier: "OU",
-	doublesTier: "DOU",
-	natDexTier: "OU",
+		tier: "OU",
+		doublesTier: "DOU",
+		natDexTier: "OU",
 	},
 	zellagraveguardian: {
 		tier: "OU",
@@ -6162,6 +6162,11 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	bryce: {
 		tier: "UU",
 		doublesTier: "DOU",
+		natDexTier: "OU",
+	},
+	peter: {
+		tier: "OU",
+		doublesTier: "DUU",
 		natDexTier: "OU",
 	},
 	

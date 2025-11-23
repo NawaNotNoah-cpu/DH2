@@ -5762,4 +5762,52 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 4,
 		num: -1002,
 	},
+	sharpshooter: {
+		name: "Sharpshooter",
+		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/4 power each with the user's stronger attacking stat.",
+
+		onBasePower(basePower, attacker, defender, move) {
+			if (!move?.flags) return;
+
+			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status') {
+				return this.chainModify(0.25);
+			}
+			if (move.multihit) {
+				return this.chainModify(1.25);
+			}
+		},
+		
+		onModifyMove(move, attacker) {
+			if (!move?.flags) return;
+
+			if ((move.flags['bullet'] || move.flags['pulse']) && !move.multihit && move.category !== 'Status') {
+				move.multihit = 6;
+				if (move.multiaccuracy) delete move.multiaccuracy;
+
+				// Use dominant offensive stat (effective stats)
+				const atk = attacker.getStat('atk', false, true);
+				const spa = attacker.getStat('spa', false, true);
+				if (atk > spa) {
+					move.category = 'Physical';
+				} else if (spa > atk) {
+					move.category = 'Special';
+				}
+			}
+		},
+
+		onPrepareHit(source, target, move) {
+			if (!move?.flags) return;
+
+			if ((move.flags['bullet'] || move.flags['pulse']) || move.multihit && move.category !== 'Status') {
+				move.multihit = 6;
+				if (move.multiaccuracy) delete move.multiaccuracy;
+			}
+		},
+
+
+		rating: 4.5,
+		num: -1003,
+	},
+	
+
 };

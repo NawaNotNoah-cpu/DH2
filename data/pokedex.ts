@@ -20284,7 +20284,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		gender: "N",
 		baseStats: { hp: 140, atk: 120, def: 70, spa: 50, spd: 70, spe: 80 }, // BST = 530
 		abilities: { 0: "Grave Guardian" },
-		heightm: 1.4,
+		heightm: 1.7,
 		weightkg: 34.0,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
@@ -20301,8 +20301,8 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		gender: "N",
 		baseStats: { hp: 70, atk: 150, def: 80, spa: 65, spd: 80, spe: 115 }, // BST = 560
 		abilities: { 0: "Grave Guardian" },
-		heightm: 1.5,
-		weightkg: 45.0,
+		heightm: 2.5,
+		weightkg: 91.0,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
 		gen: 9,
@@ -20311,12 +20311,25 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		num: -1002,
 		name: "Bryce",
 		types: ["Ground", "Water"],
-		baseStats: {hp: 60, atk: 70, def: 120, spa: 65, spd: 105, spe: 110},
+		baseStats: {hp: 60, atk: 70, def: 120, spa: 65, spd: 105, spe: 110}, // BST = 530
 		abilities: {0: "Concrete Mixer"},
 		heightm: 1.7,
-		weightkg: 86.0,
+		gender: "N",
+		weightkg: 52.0,
 		color: "Pink",
 		eggGroups: ["Water1", "Mineral"],
+	},
+	peter: {
+		num: -1003,
+		name: "Peter",
+		types: ["Steel", "Bug"],
+		baseStats: {hp: 90, atk: 100, def: 80, spa: 80, spd: 70, spe: 110}, // BST = 530
+		abilities: {0: "Sharpshooter"},
+		heightm: 1.5,
+		gender: "N",
+		weightkg: 52.0,
+		color: "Gray",
+		eggGroups: ["Field", "Mineral"],
 	},
 
 };

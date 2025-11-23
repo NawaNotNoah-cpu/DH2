@@ -22153,5 +22153,22 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			}
 		},
 	},
-
+	brassbarrelblast: {
+			num: -1004,
+			accuracy: true,
+			basePower: 25,
+			category: "Physical",
+			name: "Brass Barrel Blast",
+			shortDesc: "Hits 6 times; can’t be used twice in a row.",
+			pp: 10,
+			priority: 0,
+			flags: {protect: 1, mirror: 1, metronome: 1, bullet: 1, cantusetwice: 1},
+			multihit: 6,
+			secondary: null,
+			target: "normal",
+			type: "Steel",
+			zMove: {basePower: 180},
+			maxMove: {basePower: 160},
+			contestType: "Cool",
+	},
 };
