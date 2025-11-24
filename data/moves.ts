@@ -22159,7 +22159,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			basePower: 25,
 			category: "Physical",
 			name: "Brass Barrel Blast",
-			shortDesc: "Hits 6 times; can’t be used twice in a row.",
+			shortDesc: "Hits 6 times; Skips accuracy check; can’t be used twice in a row.",
 			pp: 10,
 			priority: 0,
 			flags: {protect: 1, mirror: 1, metronome: 1, bullet: 1, cantusetwice: 1},

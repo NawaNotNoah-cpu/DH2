@@ -100208,7 +100208,6 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			darkpulse: ["9L1"],
 			dragonpulse: ["9L1"],
 			healpulse: ["9L1"],
-			originpulse: ["9L1"],
 			terrainpulse: ["9L1"],
 			pinmissile: ["9L1"],
 			iciclespear: ["9L1"],

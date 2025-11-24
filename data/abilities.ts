@@ -5764,23 +5764,23 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	sharpshooter: {
 		name: "Sharpshooter",
-		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/4 power each with the user's stronger attacking stat.",
+		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/4 power with the user's stronger attack stat.",
 
 		onBasePower(basePower, attacker, defender, move) {
 			if (!move?.flags) return;
 
-			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status') {
+			if ((move.flags['bullet'] || move.flags['pulse']) && !move.multihit && move.category !== 'Status') {
 				return this.chainModify(0.25);
 			}
 			if (move.multihit) {
-				return this.chainModify(1.25);
+				return this.chainModify(1.5);
 			}
 		},
-		
+
 		onModifyMove(move, attacker) {
 			if (!move?.flags) return;
 
-			if ((move.flags['bullet'] || move.flags['pulse']) && !move.multihit && move.category !== 'Status') {
+			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status') {
 				move.multihit = 6;
 				if (move.multiaccuracy) delete move.multiaccuracy;
 
