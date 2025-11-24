@@ -5769,10 +5769,10 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onBasePower(basePower, attacker, defender, move) {
 			if (!move?.flags) return;
 
-			if ((move.flags['bullet'] || move.flags['pulse']) && !move.multihit && move.category !== 'Status') {
+			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status' && basePower >= 30) {
 				return this.chainModify(0.25);
 			}
-			if (move.multihit) {
+			if (move.multihit && Array.isArray(move.multihit) && move.multihit.length) {
 				return this.chainModify(1.5);
 			}
 		},
