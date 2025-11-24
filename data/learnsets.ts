@@ -100213,6 +100213,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			iciclespear: ["9L1"],
 			spikecannon: ["9L1"],
 			laserfocus: ["9L1"],
+			brassbarrelblast: ["9L1"],
 		},
 	},
 
