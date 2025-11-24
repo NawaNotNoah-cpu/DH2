@@ -5766,16 +5766,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		name: "Sharpshooter",
 		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/4 power with the user's stronger attack stat.",
 
-		onBasePower(basePower, attacker, defender, move) {
-			if (!move?.flags) return;
-
-			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status' && basePower >= 30) {
-				return this.chainModify(0.25);
-			}
-			if (move.multihit && Array.isArray(move.multihit) && move.multihit.length) {
-				return this.chainModify(1.5);
-			}
-		},
 
 		onModifyMove(move, attacker) {
 			if (!move?.flags) return;
@@ -5804,6 +5794,16 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			}
 		},
 
+		onBasePower(basePower, attacker, defender, move) {
+			if (!move?.flags) return;
+
+			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status' && basePower >= 30) {
+				return this.chainModify(0.25);
+			}
+			if (move.multihit && Array.isArray(move.multihit) && move.multihit.length && basePower <= 30) {
+				return this.chainModify(1.5);
+			}
+		},
 
 		rating: 4.5,
 		num: -1003,
