@@ -5764,50 +5764,63 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	sharpshooter: {
 		name: "Sharpshooter",
-		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/4 power with the user's stronger attack stat.",
+		shortDesc: "Bullet/Pulse/Multi-hit moves hit 6 times at 1/5 power using the higher offensive stat.",
 
-
+		// Step 1: Adjust move before the engine processes it
 		onModifyMove(move, attacker) {
 			if (!move?.flags) return;
 
-			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status') {
-				move.multihit = 6;
-				if (move.multiaccuracy) delete move.multiaccuracy;
+			const isBulletPulse = (move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status';
+			const isMulti = move.multihit && !move.spreadHit;
 
-				// Use dominant offensive stat (effective stats)
-				const atk = attacker.getStat('atk', false, true);
-				const spa = attacker.getStat('spa', false, true);
-				if (atk > spa) {
-					move.category = 'Physical';
-				} else if (spa > atk) {
-					move.category = 'Special';
-				}
+			// 1. Switch to dominant offensive stat
+			const atk = attacker.getStat('atk', false, true);
+			const spa = attacker.getStat('spa', false, true);
+			if (atk > spa) move.category = 'Physical';
+			else if (spa > atk) move.category = 'Special';
+
+			// 2. Rewrite base power (Bullet/Pulse only)
+			if (isBulletPulse) {
+				move.basePower = Math.max(1, Math.floor(move.basePower / 5)); // 1/5 power
 			}
+
+			// 3. Remove multiaccuracy (like Skill Link)
+			if (move.multiaccuracy) delete move.multiaccuracy;
 		},
 
+		// Step 2: Force 6 hits during the hit-setup phase
 		onPrepareHit(source, target, move) {
-			if (!move?.flags) return;
+			if (move.category === 'Status') return;
 
-			if ((move.flags['bullet'] || move.flags['pulse']) || move.multihit && move.category !== 'Status') {
+			const isBulletPulse = move.flags?.bullet || move.flags?.pulse;
+			const isMulti = move.multihit;
+
+			if (isBulletPulse || isMulti) {
 				move.multihit = 6;
-				if (move.multiaccuracy) delete move.multiaccuracy;
+				move.multihitType = 'sharpshooter' as 'parentalbond';
+
 			}
 		},
 
-		onBasePower(basePower, attacker, defender, move) {
-			if (!move?.flags) return;
-
-			if ((move.flags['bullet'] || move.flags['pulse']) && move.category !== 'Status' && basePower >= 30) {
-				return this.chainModify(0.25);
+		// Step 3: Remove secondary effects after the first hit (Parental Bond pattern)
+		onSourceModifySecondaries(secondaries, target, source, move) {
+			if (move.multihitType && move.hit > 1) {
+				// No secondary effects after hit 1
+				return [];
 			}
-			if (move.multihit && Array.isArray(move.multihit) && move.multihit.length && basePower <= 30) {
-				return this.chainModify(1.5);
+		},
+
+		// Step 4: Prevent self-boosting cheese (Brass Bond precedent)
+		onTryBoost(boost, target, source, effect) {
+			if (effect.effectType === 'Move' && effect.multihitType && effect.hit > 1) {
+				// Strip all self-boosts from later hits
+				let i: keyof BoostsTable;
+				for (i in boost) delete boost[i];
 			}
 		},
 
 		rating: 4.5,
 		num: -1003,
 	},
-	
 
 };
