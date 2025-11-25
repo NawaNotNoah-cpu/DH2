@@ -1608,5 +1608,6 @@ exports.BattlePokemonSprites = {
     zella:{num:-1001,front:{w:32,h:52},back:{w:34,h:51}},
     zellagraveguardian:{num:-1001,front:{w:64,h:99},back:{w:63,h:98}},
 	bryce:{num:-1002,front:{w:84,h:101},back:{w:80,h:97}},
-	peter:{num:-1003,front:{w:90,h:87},back:{w:75,h:81}}
+	peter:{num:-1003,front:{w:90,h:87},back:{w:75,h:81}},
+	darkness:{num:-1004,front:{w:128,h:101},back:{w:113,h:100}}
 };

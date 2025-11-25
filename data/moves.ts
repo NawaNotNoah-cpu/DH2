@@ -22162,7 +22162,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			shortDesc: "Hits 6 times; Skips accuracy check; can’t be used twice in a row.",
 			pp: 10,
 			priority: 0,
-			flags: {protect: 1, mirror: 1, metronome: 1, bullet: 1, cantusetwice: 1},
+			flags: {protect: 1, mirror: 1, metronome: 1, cantusetwice: 1},
 			multihit: 6,
 			secondary: null,
 			target: "normal",
@@ -22171,4 +22171,52 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			maxMove: {basePower: 160},
 			contestType: "Cool",
 	},
+	nightmarecannon: {
+		num: -1005,
+		accuracy: 100,
+		basePower: 20, // per-hit bp
+		category: "Special",
+		name: "Nightmare Cannon",
+		pp: 10,
+		priority: 0,
+		flags: {protect: 1, mirror: 1, pulse: 1},
+		// Determine number of hits based on total Dark-type party members (including fainted / healthy)
+		basePowerCallback(pokemon, target, move) {
+			return 20;
+		},
+		onModifyMove(move, pokemon) {
+			// Count ALL party members on the user's side whose type array includes 'Dark', regardless of fainted (per your spec)
+			const count = pokemon.side.pokemon.filter(p => p && p.types && p.types.includes('Dark')).length || 1;
+			move.multihit = Math.max(1, count);
+			// Ensure it uses user's SpA: force Special
+			move.category = 'Special';
+		},
+		secondary: null,
+		target: "normal",
+		type: "Dark",
+		shortDesc: "20 BP × number of Dark-type pokemon in party",
+	},
+	lullabye: {
+		num: -1006,
+		accuracy: 90,
+		basePower: 100,
+		category: "Physical",
+		name: "Lullabye",
+		pp: 10,
+		priority: 0,
+		flags: {protect: 1, mirror: 1, punch: 1, nonsky: 1},
+		target: "allAdjacentFoes",
+		type: "Dark",
+		secondary: null,
+		onHit(target, source, move) {
+			if (target.status || !target.runStatusImmunity('slp')) return;
+			target.addVolatile('yawn', source);
+		},
+		onAfterSubDamage(damage, target, source, move) {
+			if (target.status || !target.runStatusImmunity('slp')) return;
+			target.addVolatile('yawn', source);
+		},
+		shortDesc: "Hits both foes. Makes foes drowsy.",
+	},
+
 };

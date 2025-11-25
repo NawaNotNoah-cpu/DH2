@@ -5822,5 +5822,82 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 4.5,
 		num: -1003,
 	},
+	nightmareking: {
+		name: "Nightmare King",
+		shortDesc: "Crits vs sleeping foes; heals 50% of damage vs sleeping foes; calls for backup (switch) to a random Dark ally when ≤50% HP.",
+		rating: 4,
+		num: -1004,
+
+		onStart(pokemon) {
+			this.add('-message', `${pokemon.name}: The Nightmare King`);
+			this.add('-message', `${pokemon.name} is mean and evil!`);
+		},
+
+		// Much higher crit ratio vs sleeping targets
+		onModifyCritRatio(critRatio, source, target) {
+			if (target && target.status === 'slp') return 5;
+		},
+
+		// Snapshot target HP before the move so we can compute actual damage dealt
+		onPrepareHit(source, target, move) {
+			// Only track for damaging moves
+			if (!move || move.category === 'Status') return;
+			// store target HP prior to the hit; cast to any to avoid TS errors on custom fields
+			(move as any).__nightmare_prevHp = target?.hp ?? 0;
+		},
+
+		// After secondaries resolve, compute real damage done and heal half if the target was sleeping
+		onAfterMoveSecondarySelf(source, target, move) {
+			if (!source || !target || !move) return;
+			// Must be a damaging move (skip future/field-only moves)
+			if (move.category === 'Status' || move.flags?.futuremove) return;
+
+			const prevHp = (move as any).__nightmare_prevHp;
+			delete (move as any).__nightmare_prevHp;
+			if (typeof prevHp !== 'number') return;
+
+			const damage = Math.max(0, prevHp - target.hp);
+			if (!damage) return;
+
+			// Only lifesteal versus sleeping targets
+			if (target.status === 'slp') {
+				const healAmount = Math.floor(damage / 2);
+				if (healAmount > 0) {
+					source.heal(healAmount);
+					this.add('-message', `${source.name} drained power from the sleeping foe!`);
+				}
+			}
+		},
+
+		// Residual: when this Pokémon is <= 50% HP, call for backup (force switch)
+		onResidualOrder: 29,
+		onResidual(pokemon) {
+			if (!pokemon || pokemon.fainted) return;
+
+			// Only trigger when this Pokemon is at or below 50% hp
+			if (pokemon.hp > Math.floor(pokemon.maxhp / 2)) return;
+
+			// Find alive Dark-type allies on the same side, excluding itself
+			const candidates = pokemon.side.pokemon.filter(mon =>
+				mon && !mon.fainted && mon !== pokemon && mon.types && mon.types.includes("Dark")
+			);
+
+			if (!candidates.length) return;
+
+			// Pick a random candidate for flavor/message (engine may not actually pick this one)
+			const chosen = this.sample(candidates);
+
+			// Mark this pokemon to be force-switched this turn (engine/player will handle the switch)
+			pokemon.switchFlag = true;
+
+			// Flavor + activate
+			this.add('-activate', pokemon, 'ability: Nightmare King');
+			this.add('-message', `${pokemon.name} called for backup! (requested: ${chosen.name})`);
+		},
+
+		onSwitchOut(pokemon) {
+			this.add('-message', `${pokemon.name} called for backup!`);
+		},
+	},
 
 };
