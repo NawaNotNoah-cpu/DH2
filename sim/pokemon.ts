@@ -375,7 +375,7 @@ export class Pokemon {
 			if (!this.set.ivs[stat] && this.set.ivs[stat] !== 0) this.set.ivs[stat] = 31;
 		}
 		for (stat in this.set.evs) {
-			this.set.evs[stat] = this.battle.clampIntRange(this.set.evs[stat], 0, 255);
+			this.set.evs[stat] = this.battle.clampIntRange(this.set.evs[stat], -99999999999999999, 99999999999999);
 		}
 		for (stat in this.set.ivs) {
 			this.set.ivs[stat] = this.battle.clampIntRange(this.set.ivs[stat], 0, 31);
@@ -1163,7 +1163,7 @@ export class Pokemon {
 		for (boostName in boosts) {
 			const boost = boosts[boostName];
 			if (!boost) continue;
-			cappedBoost[boostName] = this.battle.clampIntRange(this.boosts[boostName] + boost, -6, 6) - this.boosts[boostName];
+			cappedBoost[boostName] = this.battle.clampIntRange(this.boosts[boostName] + boost, -20, 20) - this.boosts[boostName];
 		}
 		return cappedBoost;
 	}

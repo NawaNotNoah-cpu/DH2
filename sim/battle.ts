@@ -1811,12 +1811,12 @@ export class Battle {
 		let limitedEVs: boolean | null = null;
 		for (const side of this.sides) {
 			const sideLimitedEVs = !side.pokemon.some(
-				pokemon => Object.values(pokemon.set.evs).reduce((a, b) => a + b, 0) > 510
+				pokemon => Object.values(pokemon.set.evs).reduce((a, b) => a + b, 0) > 999999999
 			);
 			if (limitedEVs === null) {
 				limitedEVs = sideLimitedEVs;
 			} else if (limitedEVs !== sideLimitedEVs) {
-				this.add('bigerror', "Warning: One player isn't adhering to a 510 EV limit, and the other player is.");
+				this.add('bigerror', "Warning: One player isn't adhering to a 67 EV limit, and the other player is.");
 			}
 		}
 	}
