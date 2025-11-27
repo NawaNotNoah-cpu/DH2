@@ -1224,7 +1224,7 @@ export class TeamValidator {
 		} else { // EVs
 			for (const stat in set.evs) {
 				if (set.evs[stat as StatID] > 999999) {
-					problems.push(`${name} has more than 255 EVs in ${Dex.stats.names[stat as 'hp']}.`);
+					problems.push(`${name} has more than 999999 EVs in ${Dex.stats.names[stat as 'hp']}.`);
 				}
 			}
 			if (dex.gen <= 2) {
@@ -1253,7 +1253,7 @@ export class TeamValidator {
 			}
 		}
 
-		if (evLimit !== null && totalEV > evLimit) {
+		if (evLimit !== null && totalEV > 99999999) {
 			if (!evLimit) {
 				problems.push(`${name} has EVs, which is not allowed by this format.`);
 			} else {

@@ -20335,7 +20335,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		num: -1004,
 		name: "Darkness",
 		types: ["Dark"],
-		baseStats: {hp: 125, atk: 95, def: 110, spa: 115, spd: 80, spe: 65},
+		baseStats: {hp: 135, atk: 95, def: 110, spa: 115, spd: 80, spe: 65},
 		abilities: {0: "Nightmare King"},
 		heightm: 2.0,
 		weightkg: 200,

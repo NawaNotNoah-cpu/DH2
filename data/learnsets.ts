@@ -100227,7 +100227,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			pursuit: ["9L1"],
 			faintattack: ["9L1"],
 			nightmare: ["9L1"],
-			doublteam: ["9L1"],
+			doubleteam: ["9L1"],
 			haze: ["9L1"],
 			darkvoid: ["9L1"],
 			embargo: ["9L1"],

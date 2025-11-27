@@ -5863,7 +5863,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (target.status === 'slp') {
 				const healAmount = Math.floor(damage / 2);
 				if (healAmount > 0) {
-					source.heal(healAmount);
+					this.heal(healAmount);
 					this.add('-message', `${source.name} drained power from the sleeping foe!`);
 				}
 			}

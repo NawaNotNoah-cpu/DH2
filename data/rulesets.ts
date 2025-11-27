@@ -611,7 +611,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 				const [low, high] = range.split('-').map(num => parseInt(num));
 				const ev = set.evs[statid];
 
-				if (ev < -999999 || ev > 999999) {
+				if (ev < -99999999 || ev > 99999999) {
 					problems.push(`${set.name || set.species}'s ${this.dex.stats.names[statid]} EV (${ev}) must be ${low}-${high}`);
 				}
 			}
