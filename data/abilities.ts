@@ -5838,36 +5838,32 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (target && target.status === 'slp') return 5;
 		},
 
-		// Snapshot target HP before the move so we can compute actual damage dealt
-		onPrepareHit(source, target, move) {
-			// Only track for damaging moves
+		// Mark moves used by this Pokémon so other hooks can identify them.
+		onModifyMovePriority: -1,
+		onModifyMove(move, attacker) {
 			if (!move || move.category === 'Status') return;
-			// store target HP prior to the hit; cast to any to avoid TS errors on custom fields
-			(move as any).__nightmare_prevHp = target?.hp ?? 0;
+			if (!attacker || attacker !== this.effectState.target) return;
+			// mark the move so we can check it in onAfterMoveSecondarySelf
+			(move as any).nightmareUsed = true;
 		},
 
-		// After secondaries resolve, compute real damage done and heal half if the target was sleeping
+		// After the move resolves, heal the Nightmare King for 50% of damage dealt to sleeping foes.
 		onAfterMoveSecondarySelf(source, target, move) {
-			if (!source || !target || !move) return;
-			// Must be a damaging move (skip future/field-only moves)
-			if (move.category === 'Status' || move.flags?.futuremove) return;
-
-			const prevHp = (move as any).__nightmare_prevHp;
-			delete (move as any).__nightmare_prevHp;
-			if (typeof prevHp !== 'number') return;
-
-			const damage = Math.max(0, prevHp - target.hp);
+			if (!move || !target || !source) return;
+			if (source !== this.effectState.target) return;
+			// Only care about moves that were marked in onModifyMove
+			if (!(move as any).nightmareUsed) return;
+			if (target.status !== 'slp') return;
+			const lastAttackedBy = target.getLastAttackedBy();
+			if (!lastAttackedBy) return;
+			const damage = move.multihit ? move.totalDamage : lastAttackedBy.damage;
 			if (!damage) return;
-
-			// Only lifesteal versus sleeping targets
-			if (target.status === 'slp') {
-				const healAmount = Math.floor(damage / 2);
-				if (healAmount > 0) {
-					this.heal(healAmount);
-					this.add('-message', `${source.name} drained power from the sleeping foe!`);
-				}
-			}
+			const healAmount = Math.floor(damage / 2);
+			if (healAmount > 0) this.heal(healAmount, source, target);
+			this.add('-message', `${source.name} drained good dreams from ${target.name}!`);
 		},
+
+
 
 		// Residual: when this Pokémon is <= 50% HP, call for backup (force switch)
 		onResidualOrder: 29,
@@ -5883,11 +5879,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			);
 
 			if (!candidates.length) return;
-
-			// Pick a random candidate for flavor/message (engine may not actually pick this one)
 			const chosen = this.sample(candidates);
-
-			// Mark this pokemon to be force-switched this turn (engine/player will handle the switch)
 			pokemon.switchFlag = true;
 
 			// Flavor + activate
