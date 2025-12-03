@@ -20281,7 +20281,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		num: -1001,
 		name: "Zella",
 		types: ["Ghost"], 
-		gender: "N",
+		gender: "F",
 		baseStats: { hp: 140, atk: 120, def: 70, spa: 50, spd: 70, spe: 80 }, // BST = 530
 		abilities: { 0: "Grave Guardian" },
 		heightm: 1.7,
@@ -20314,7 +20314,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		baseStats: {hp: 60, atk: 70, def: 120, spa: 65, spd: 105, spe: 110}, // BST = 530
 		abilities: {0: "Concrete Mixer"},
 		heightm: 1.7,
-		gender: "N",
+		gender: "F",
 		weightkg: 52.0,
 		color: "Pink",
 		eggGroups: ["Water1", "Mineral"],
@@ -20323,10 +20323,10 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		num: -1003,
 		name: "Peter",
 		types: ["Steel", "Bug"],
-		baseStats: {hp: 90, atk: 100, def: 80, spa: 80, spd: 70, spe: 110}, // BST = 530
+		baseStats: {hp: 100, atk: 90, def: 80, spa: 80, spd: 70, spe: 110}, // BST = 530
 		abilities: {0: "Sharpshooter"},
 		heightm: 1.5,
-		gender: "N",
+		gender: "M",
 		weightkg: 52.0,
 		color: "Gray",
 		eggGroups: ["Field", "Mineral"],
@@ -20335,6 +20335,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		num: -1004,
 		name: "Darkness",
 		types: ["Dark"],
+		gender: "M",
 		baseStats: {hp: 135, atk: 95, def: 110, spa: 115, spd: 80, spe: 65},
 		abilities: {0: "Nightmare King"},
 		heightm: 2.0,

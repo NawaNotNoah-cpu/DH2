@@ -5665,7 +5665,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		},
 
 		onDamage(damage, target, source, effect) {
-			// Protection trigger (keep naming as 'target' here because onDamage passes 'target')
 			if (target.volatiles['graveguardianused']) return;
 			if (target.volatiles['graveguardianprotect'] && !target.volatiles['graveguardianused']) return 0;
 			if (damage >= target.hp) {
@@ -5678,7 +5677,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				this.add('-message', `${target.name}'s spirit refuses to fade!`);
 				return damageToApply;
 			}
-			return; // normal damage
+			return;
 		},
 
 		condition: {
@@ -5691,28 +5690,25 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			},
 		},
 
-		// If a Pokemon switches in *already* in the Grave Guardian form, mark the ability as used.
-		// This prevents double-protection/transform re-triggering for mons that were transformed off-slot.
 		onSwitchIn(pokemon) {
 			// check baseSpecies so reworks with forme naming
 			if (pokemon.baseSpecies.baseSpecies === 'Zella' && pokemon.species.id === 'zellagraveguardian') {
-				// mark it used so it doesn't try to protect & transform again
+
 				pokemon.addVolatile('graveguardianused');
+				// Ensure the Grave Guardian form is afflicted with Curse for balance
+				pokemon.addVolatile('curse');
+
 			}
 		},
 
 		onResidualOrder: 29,
 		onResidual(pokemon) {
-			// Use the same param name as Power Construct for parity
 			if (!pokemon.volatiles['graveguardianprotect'] || pokemon.volatiles['graveguardianused']) return;
 
-			// Remove temporary protection and mark used
 			pokemon.removeVolatile('graveguardianprotect');
 			pokemon.addVolatile('graveguardianused');
 
-			// Only transform if not transformed and not already the grave guardian form
 			if (!pokemon.transformed && pokemon.species.id !== 'zellagraveguardian') {
-				// Transform
 				pokemon.formeChange('zellagraveguardian', this.effect, true);
 
 				// Swap Bone Bash -> Zella-Zella Bone Barrage if present
@@ -5724,17 +5720,18 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 					if (moveObj) slot.move = moveObj.name;
 				}
 
-				// Recompute baseMaxhp
 				pokemon.baseMaxhp = Math.floor(Math.floor(
 					2 * pokemon.species.baseStats['hp'] + pokemon.set.ivs['hp'] + Math.floor(pokemon.set.evs['hp'] / 4) + 100
 				) * pokemon.level / 100 + 10);
 
 				const newMaxHP = pokemon.baseMaxhp;
 				pokemon.maxhp = newMaxHP;
-				pokemon.hp = Math.floor(newMaxHP / 2);
+				pokemon.hp = Math.floor(newMaxHP);
 
 				this.add('-heal', pokemon, pokemon.getHealth, '[silent]');
-
+		
+				pokemon.addVolatile('curse');
+				this.add('-start', pokemon, 'move: Curse');
 
 				this.add('-message', `${pokemon.name}'s Spirit has been Overwhelmed by the Grave Guardian!`);
 			}
@@ -5746,7 +5743,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		name: "Concrete Mixer",
 		shortDesc: "Special hit: sets rain. Physical hit: sets sandstorm.",
 
-		// After taking damage
 		onDamagingHit(damage, target, source, move) {
 			if (!move) return;
 
@@ -5784,7 +5780,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				move.basePower = Math.max(1, Math.floor(move.basePower / 5)); // 1/5 power
 			}
 
-			// 3. Remove multiaccuracy (like Skill Link)
 			if (move.multiaccuracy) delete move.multiaccuracy;
 		},
 
@@ -5802,15 +5797,14 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			}
 		},
 
-		// Step 3: Remove secondary effects after the first hit (Parental Bond pattern)
+		// Step 3: Remove secondary effects after the first hit
 		onSourceModifySecondaries(secondaries, target, source, move) {
 			if (move.multihitType && move.hit > 1) {
-				// No secondary effects after hit 1
 				return [];
 			}
 		},
 
-		// Step 4: Prevent self-boosting cheese (Brass Bond precedent)
+		// Step 4: Prevent self-boosting cheese during multi-hits
 		onTryBoost(boost, target, source, effect) {
 			if (effect.effectType === 'Move' && effect.multihitType && effect.hit > 1) {
 				// Strip all self-boosts from later hits
@@ -5824,7 +5818,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	nightmareking: {
 		name: "Nightmare King",
-		shortDesc: "Crits vs sleeping foes; heals 50% of damage vs sleeping foes; calls for backup (switch) to a random Dark ally when ≤50% HP.",
+		shortDesc: "Crits and drains sleeping foes; Summons Dark ally at <50% HP.",
 		rating: 4,
 		num: -1004,
 
@@ -5843,7 +5837,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onModifyMove(move, attacker) {
 			if (!move || move.category === 'Status') return;
 			if (!attacker || attacker !== this.effectState.target) return;
-			// mark the move so we can check it in onAfterMoveSecondarySelf
 			(move as any).nightmareUsed = true;
 		},
 
@@ -5882,7 +5875,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			const chosen = this.sample(candidates);
 			pokemon.switchFlag = true;
 
-			// Flavor + activate
+
 			this.add('-activate', pokemon, 'ability: Nightmare King');
 			this.add('-message', `${pokemon.name} called for backup! (requested: ${chosen.name})`);
 		},
